@@ -62,6 +62,22 @@ en amont : `fr_FR-siwis-medium` (femme, défaut), `fr_FR-tom-medium` (homme),
 `fr_FR-upmc-medium` (deux voix), `fr_FR-mls-medium`. Changer de voix = changer
 `model`, rien d'autre.
 
+## Résumé parlé, réponse complète à l'écran
+
+Une réponse longue n'a pas à être lue en entier. Si elle commence par une ligne
+**`En bref : …`**, seule cette phrase est prononcée ; tout le reste demeure à
+l'écran. Sans marqueur, le service prononce le début et coupe en fin de phrase.
+
+```markdown
+En bref : le plafond vocal change, le contenu reste.
+
+## Détail
+…
+```
+
+La convention est visible à l'écran : rien n'est retiré à qui lit la réponse,
+seulement à qui l'écoute. `maxTextChars` devient le budget de ce résumé.
+
 ## Réglage
 
 Défauts dans `lib/config.js`, surchargés par la rangée `voice-tts` du profil,

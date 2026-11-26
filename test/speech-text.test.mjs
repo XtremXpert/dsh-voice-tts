@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { limitSpoken, splitSpoken, toSpoken } from '../lib/speech-text.js'
+import { limitSpoken, pickSpoken, splitSpoken, toSpoken } from '../lib/speech-text.js'
 
 test('toSpoken retire ce qui ne se prononce pas', () => {
   const answer = [
@@ -64,4 +64,24 @@ test('splitSpoken découpe par phrases sans perdre de texte', () => {
   assert.ok(pieces.length > 1)
   assert.equal(pieces.join(' '), text)
   assert.ok(pieces.every((piece) => piece.trim() !== ''))
+})
+
+test('pickSpoken préfère le résumé explicite au reste de la réponse', () => {
+  const answer = 'En bref : la voix dit ceci.\n\n## Détail\n\nTout ceci reste à l’écran et ne se prononce pas.'
+  const first = pickSpoken(answer, 700)
+  assert.equal(first.text, 'la voix dit ceci.')
+  assert.equal(first.summarized, true)
+  assert.equal(first.truncated, false)
+})
+
+test('pickSpoken retombe sur le début quand aucun résumé n’est donné', () => {
+  const second = pickSpoken('Première phrase. Deuxième phrase.', 700)
+  assert.equal(second.summarized, false)
+  assert.match(second.text, /^Première phrase/)
+})
+
+test('pickSpoken respecte le plafond, résumé compris', () => {
+  const third = pickSpoken('En bref : ' + 'mot '.repeat(400) + '.', 120)
+  assert.equal(third.summarized, true)
+  assert.ok(third.text.length <= 121, `longueur ${third.text.length}`)
 })
