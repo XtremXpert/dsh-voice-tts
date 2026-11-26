@@ -88,6 +88,17 @@ En bref : le plafond vocal change, le contenu reste.
 La convention est visible à l'écran : rien n'est retiré à qui lit la réponse,
 seulement à qui l'écoute. `maxTextChars` devient le budget de ce résumé.
 
+## La carte de configuration
+
+Le schéma déclaratif de DSH n'étant pas atteignable dans ce profil, le bundle
+publie sa propre carte dans sa fiche : **Plugins → Synthèse vocale locale**.
+
+Elle interroge `GET /config` et écrit par `POST /config` le moteur (`piper` ou
+`say`) et la voix Apple. Le choix est persisté dans
+`~/Library/Application Support/dsh-voice-tts/settings.json` (600), relu au
+démarrage ; l'ordre de priorité est défauts → ce fichier → rangée du profil →
+environnement.
+
 ## Réglage
 
 Défauts dans `lib/config.js`, surchargés par la rangée `voice-tts` du profil,

@@ -14,6 +14,7 @@ import Schema from '@deepseek-ai/schemastery'
 
 import { DEFAULTS, resolveConfig } from './lib/config.js'
 import { createSpeechService } from './lib/server.js'
+import { readSettings } from './lib/settings.js'
 
 /** Nom du plugin. */
 export const name = 'dsh-voice-tts'
@@ -61,8 +62,11 @@ export const Config = Schema.object({
  * @param {object} ctx contexte du Host
  * @param {object} rawConfig config de la rangée `voice-tts`
  */
-export function apply(ctx, rawConfig = {}) {
-  const config = resolveConfig(rawConfig)
+export async function apply(ctx, rawConfig = {}) {
+  // Les réglages de la carte du plugin priment sur les défauts et sont relus
+  // à chaque démarrage.
+  const stored = await readSettings()
+  const config = resolveConfig(rawConfig, process.env, stored)
   const logger = ctx.logger
   const service = createSpeechService({ config, logger })
 
