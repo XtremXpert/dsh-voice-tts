@@ -1,0 +1,7 @@
+# La synthèse vocale locale : un service HTTP que la page Web peut appeler.
+# La config par défaut vit dans lib/config.js ; ne surcharger ici que ce qui
+# diffère de cette machine.
+- insert:
+    - id: voice-tts
+      name: dsh-voice-tts
+      config: {}

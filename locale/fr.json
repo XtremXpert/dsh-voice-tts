@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Synthèse vocale locale",
+    "description": "Expose les voix Apple comme service de synthèse sur la boucle locale (127.0.0.1:9033), pour que la page Web puisse lire une réponse à voix haute : texte nettoyé, réponse coupée en fin de phrase, aucun service tiers."
+  }
+}

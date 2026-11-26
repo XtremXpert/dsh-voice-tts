@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Local speech synthesis",
+    "description": "Exposes the Apple voices as a speech service on the loopback interface (127.0.0.1:9033) so the Web page can read a reply aloud: cleaned text, answers cut at a sentence end, no third-party service."
+  }
+}

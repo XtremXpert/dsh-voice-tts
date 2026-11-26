@@ -1,0 +1,30 @@
+{
+  "name": "dsh-voice-tts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Synthèse vocale locale pour DSH : expose `say` (voix Apple) comme service HTTP sur la boucle locale, pour que la page Web puisse lire une réponse à voix haute.",
+  "exports": {
+    ".": "./index.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "lib/*.js",
+    "tools/voices.swift",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "README.md",
+    "icon.svg"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" }
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

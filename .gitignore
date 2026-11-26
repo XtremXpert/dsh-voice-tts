@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+*.log
+*.aiff
+*.wav
+.env
+.env.*
+coverage/
+test/.tmp/
