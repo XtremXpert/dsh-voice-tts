@@ -16,7 +16,8 @@
     "cordis.patch.yml",
     "locale/*.json",
     "README.md",
-    "icon.svg"
+    "icon.svg",
+    "assets/*.wav"
   ],
   "scripts": {
     "test": "node --test test/*.test.mjs"

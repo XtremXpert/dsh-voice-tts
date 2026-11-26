@@ -62,6 +62,16 @@ en amont : `fr_FR-siwis-medium` (femme, défaut), `fr_FR-tom-medium` (homme),
 `fr_FR-upmc-medium` (deux voix), `fr_FR-mls-medium`. Changer de voix = changer
 `model`, rien d'autre.
 
+## Thèmes du mode conversation
+
+`GET /assets/theme-full.wav` et `/assets/theme-light.wav` servent les boucles du
+mode conversation : instruments General MIDI rendus hors ligne (timbales,
+chœur, harmonica grave, basse), 22,86 s, bouclables. `full` pour la rédaction,
+`light` — chœur et basse seulement — pour la transcription.
+
+Les fichiers sont rendus par `fluidsynth` sur le banc FluidR3Mono ; le MIDI
+d'origine n'est pas embarqué, seul le rendu l'est.
+
 ## Résumé parlé, réponse complète à l'écran
 
 Une réponse longue n'a pas à être lue en entier. Si elle commence par une ligne
