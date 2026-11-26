@@ -10,11 +10,51 @@
  * Rien ne sort de la machine, aucune clé n'est lue.
  */
 
-import { resolveConfig } from './lib/config.js'
+import Schema from '@deepseek-ai/schemastery'
+
+import { DEFAULTS, resolveConfig } from './lib/config.js'
 import { createSpeechService } from './lib/server.js'
 
 /** Nom du plugin. */
 export const name = 'dsh-voice-tts'
+
+/**
+ * Réglages exposés dans la fiche du plugin : moteur, voix, débit, plafond.
+ * Les valeurs par défaut viennent de `lib/config.js`, seule source de vérité.
+ */
+export const Config = Schema.object({
+  tts: Schema.object({
+    provider: Schema.union(['piper', 'say'])
+      .default(DEFAULTS.tts.provider)
+      .description('Moteur : Piper (neuronal local) ou les voix Apple'),
+    voice: Schema.string()
+      .default(DEFAULTS.tts.voice)
+      .description('Voix Apple ; vide = la meilleure installée, Premium d’abord'),
+    locale: Schema.string()
+      .default(DEFAULTS.tts.locale)
+      .description('Langue visée par le choix automatique de la voix'),
+    rate: Schema.natural()
+      .default(DEFAULTS.tts.rate)
+      .min(80)
+      .max(400)
+      .description('Débit des voix Apple, en mots par minute'),
+    piper: Schema.object({
+      model: Schema.string()
+        .default(DEFAULTS.tts.piper.model)
+        .description('Modèle Piper : nom sous voices/, ou chemin absolu du .onnx'),
+      lengthScale: Schema.number()
+        .default(DEFAULTS.tts.piper.lengthScale)
+        .min(0.5)
+        .max(2)
+        .description('Débit Piper ; au-dessus de 1, plus lent'),
+    }),
+  }).description('Synthèse'),
+  maxTextChars: Schema.natural()
+    .default(DEFAULTS.maxTextChars)
+    .min(80)
+    .max(4000)
+    .description('Longueur maximale prononcée ; le reste demeure à l’écran'),
+})
 
 /**
  * Démarre le service de synthèse avec la vie du Host.
@@ -28,7 +68,7 @@ export function apply(ctx, rawConfig = {}) {
 
   ctx.effect(() => {
     service.start()
-      .then((url) => logger?.info?.(`voice-tts: synthèse locale sur ${url}`))
+      .then((url) => logger?.info?.(`voice-tts: synthèse locale sur ${url} (${config.tts.provider})`))
       .catch((error) => logger?.warn?.(`voice-tts: service non démarré — ${messageOf(error)}`))
     return () => { void service.stop() }
   }, 'voice-tts: service de synthèse')
