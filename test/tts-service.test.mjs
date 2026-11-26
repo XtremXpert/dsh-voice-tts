@@ -20,7 +20,7 @@ const CATALOG = [
 ].join('\n')
 
 /** Section `tts` qui parle pour de vrai, sans dépendre d'une voix précise. */
-const SAY_TTS = { ...DEFAULTS.tts, rate: 185, sampleRate: 24000, timeoutMs: 30000 }
+const SAY_TTS = { ...DEFAULTS.tts, provider: 'say', rate: 185, sampleRate: 24000, timeoutMs: 30000 }
 
 /** Lit les morceaux RIFF d'un WAV (`say` peut intercaler des morceaux LIST). */
 function wavFormat(wav) {
@@ -117,6 +117,27 @@ test('le catalogue Apple de cette machine liste le français', async () => {
   const french = voices.filter((voice) => /^fr\b/i.test(voice.locale))
   assert.ok(french.length >= 2, `voix françaises : ${french.map((voice) => voice.name).join(', ')}`)
   assert.ok(french.every((voice) => ['compact', 'enhanced', 'premium', 'siri'].includes(voice.quality)))
+})
+
+test('un modèle Piper introuvable fait retomber le service sur say', async () => {
+  const config = resolveConfig({
+    port: 0,
+    tts: { ...DEFAULTS.tts, provider: 'piper', piper: { ...DEFAULTS.tts.piper, model: '/inexistant/modele.onnx' } },
+  })
+  const service = createSpeechService({ config, logger: { info() {}, warn() {} } })
+  await service.start()
+  const base = `http://127.0.0.1:${service.port()}`
+  try {
+    const response = await fetch(`${base}/synthesize`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ text: 'Repli attendu.' }),
+    })
+    assert.equal(response.status, 200)
+    assert.equal(response.headers.get('x-voice-source'), 'say')
+  } finally {
+    await service.stop()
+  }
 })
 
 test('le service expose /status, /voices, /health et la synthèse', async () => {
