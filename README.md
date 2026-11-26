@@ -42,6 +42,26 @@ dsh plugin --profile web add dsh-voice-tts
 Dans l'application : `plugin_manager` → `install_bundle` avec le chemin absolu
 du dépôt, puis redémarrer le client (le service est côté Host).
 
+## Moteurs de synthèse
+
+Deux moteurs, choisis par `tts.provider` :
+
+| Moteur | Qualité | Réseau | Réglé par |
+|---|---|---|---|
+| `piper` (défaut) | neuronale, locale, naturelle | aucun | `tts.piper` |
+| `say` | voix Apple installées (compact/Enhanced/Premium) | aucun | `tts.voice`, `tts.rate` |
+
+`piper` l'emporte quand il est configuré ; s'il manque, la synthèse **retombe
+sur `say`** au lieu d'échouer — une panne de modèle ne doit pas priver la page
+de voix. Le journal du Host dit lequel a répondu, et l'en-tête
+`x-voice-source` le répète au client.
+
+Piper vit dans `~/Library/Application Support/dsh-tts-piper` : un venv
+(`piper-tts`) et des modèles ONNX dans `voices/`. Voix françaises disponibles
+en amont : `fr_FR-siwis-medium` (femme, défaut), `fr_FR-tom-medium` (homme),
+`fr_FR-upmc-medium` (deux voix), `fr_FR-mls-medium`. Changer de voix = changer
+`model`, rien d'autre.
+
 ## Réglage
 
 Défauts dans `lib/config.js`, surchargés par la rangée `voice-tts` du profil,
@@ -50,6 +70,10 @@ puis par l'environnement du processus Host :
 | Variable | Défaut | Rôle |
 |---|---|---|
 | `DSH_VOICE_TTS_PORT` | `9033` | port d'écoute, boucle locale seulement |
+| `DSH_VOICE_TTS_PROVIDER` | `piper` | `piper` ou `say` |
+| `DSH_VOICE_TTS_PIPER_BIN` | venv local | binaire `piper` |
+| `DSH_VOICE_TTS_PIPER_MODEL` | `fr_FR-siwis-medium.onnx` | modèle ONNX |
+| `DSH_VOICE_TTS_PIPER_LENGTH_SCALE` | `1` | débit (>1 = plus lent) |
 | `DSH_VOICE_TTS_VOICE` | *(vide)* | nom de voix Apple ; vide = meilleure voix de `locale` |
 | `DSH_VOICE_TTS_LOCALE` | `fr-CA` | langue visée par le choix automatique |
 | `DSH_VOICE_TTS_RATE` | `185` | débit `say`, mots par minute |
